@@ -62,10 +62,10 @@ export class MindMapView extends ItemView {
 		let mindData;
 		// Heuristic: If content has Markdown headers, use Markdown parser.
 		// Otherwise (or if it looks like Mind Elixir Plaintext), use Plaintext parser which supports advanced features.
-		if (data.match(/^#+\s/m)) {
-			mindData = parseMarkdown(data, this.file.basename);
-		} else {
+		if (data.startsWith("- ")) {
 			mindData = parsePlaintext(data, this.file.basename);
+		} else {
+			mindData = parseMarkdown(data, this.file.basename);
 		}
 
 		this.mind.init(mindData);
