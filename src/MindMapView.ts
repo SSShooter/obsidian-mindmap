@@ -1,6 +1,7 @@
 import { ItemView, WorkspaceLeaf, TFile } from "obsidian";
 import MindElixir, { MindElixirInstance } from "mind-elixir";
 import { parseMarkdown, parsePlaintext } from "./parser";
+import { MindMapSettings } from "./settings";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
 
@@ -8,9 +9,11 @@ export class MindMapView extends ItemView {
 	mind: MindElixirInstance | null = null;
 	file: TFile | null = null;
 	data: string = "";
+	settings: MindMapSettings;
 
-	constructor(leaf: WorkspaceLeaf) {
+	constructor(leaf: WorkspaceLeaf, settings: MindMapSettings) {
 		super(leaf);
+		this.settings = settings;
 	}
 
 	getViewType() {
@@ -65,7 +68,11 @@ export class MindMapView extends ItemView {
 		if (data.startsWith("- ")) {
 			mindData = parsePlaintext(data, this.file.basename);
 		} else {
-			mindData = parseMarkdown(data, this.file.basename);
+			mindData = parseMarkdown(
+				data,
+				this.file.basename,
+				this.settings.h1AsRoot,
+			);
 		}
 
 		this.mind.init(mindData);

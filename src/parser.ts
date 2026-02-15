@@ -18,6 +18,7 @@ interface TreeItem {
 export function parseMarkdown(
 	content: string,
 	filename: string,
+	h1AsRoot: boolean = false,
 ): MindElixirData {
 	try {
 		// Parse markdown to AST
@@ -26,14 +27,31 @@ export function parseMarkdown(
 		// Build tree structure from AST
 		const tree = markdownAstToTree(ast);
 
-		// Convert to MindElixir format
-		const nodes = treeToMindElixir(tree.children);
+		let nodes: NodeObj[];
+		let rootTopic = filename;
 
-		// Return with filename as root
+		if (h1AsRoot) {
+			const h1Index = tree.children.findIndex(
+				(child) =>
+					child.type === "heading" &&
+					(child.object as Heading).depth === 1,
+			);
+			if (h1Index !== -1) {
+				const h1 = tree.children[h1Index]!;
+				rootTopic = extractText(h1.object);
+				nodes = treeToMindElixir(h1.children);
+			} else {
+				nodes = treeToMindElixir(tree.children);
+			}
+		} else {
+			nodes = treeToMindElixir(tree.children);
+		}
+
+		// Return with filename (or H1) as root
 		return {
 			nodeData: {
 				id: generateId(),
-				topic: filename,
+				topic: rootTopic,
 				children: nodes,
 			},
 		};
