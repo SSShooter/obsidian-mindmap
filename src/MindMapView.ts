@@ -40,6 +40,7 @@ export class MindMapView extends ItemView {
 			contextMenu: true,
 			toolBar: true,
 			keypress: true,
+			selectionContainer: "body",
 		});
 
 		// If we already have a file, render it

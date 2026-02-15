@@ -1,4 +1,4 @@
-/* node_modules/.pnpm/mind-elixir@5.8.0/node_modules/mind-elixir/dist/MindElixir.css */
+/* node_modules/.pnpm/mind-elixir@5.8.1/node_modules/mind-elixir/dist/MindElixir.css */
 .map-container {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-family:
@@ -313,7 +313,7 @@
   line-height: 1.3em;
 }
 .map-container .mind-elixir-ghost {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   box-sizing: content-box;
@@ -331,7 +331,6 @@
   display: none;
   pointer-events: none;
   z-index: 1000;
-  transform: translate(10px, 10px);
 }
 .map-container .selection-area {
   background: #4f90f22d;
