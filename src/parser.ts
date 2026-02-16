@@ -234,10 +234,7 @@ export function parsePlaintext(
 	try {
 		// Use the library's converter
 		const data = plaintextToMindElixir(content);
-		if (data && data.nodeData) {
-			data.nodeData.topic = filename;
-			return data;
-		}
+		return data;
 	} catch (e) {
 		console.error("Plaintext parse error", e);
 	}

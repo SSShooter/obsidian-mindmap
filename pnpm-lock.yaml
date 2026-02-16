@@ -12,8 +12,8 @@ importers:
         specifier: ^4.0.4
         version: 4.0.4
       mind-elixir:
-        specifier: ^5.8.1
-        version: 5.8.1
+        specifier: ^5.8.2
+        version: 5.8.2
       obsidian:
         specifier: latest
         version: 1.12.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
@@ -1227,8 +1227,8 @@ packages:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
-  mind-elixir@5.8.1:
-    resolution: {integrity: sha512-CLJyE22fW0/jPaksqfdEHmS32Ni+Ekrd3cOt8I8lYOX/pqoMWDpV9OaI/ycTTQE4aMSIBu6tAgw50lTqnhI/OQ==}
+  mind-elixir@5.8.2:
+    resolution: {integrity: sha512-gDkE5vuS0ani6vFmaAHWD0Oc9Bgw+M1swZP1DpRrrW95kODxef8Kk7t6HXvj0RctYz63FrNsa9EW6Lea4WT/jw==}
 
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
@@ -3189,7 +3189,7 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  mind-elixir@5.8.1: {}
+  mind-elixir@5.8.2: {}
 
   minimatch@3.1.2:
     dependencies:
