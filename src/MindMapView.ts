@@ -5,10 +5,13 @@ import { MindMapSettings } from "./settings";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
 
+interface MindMapViewState {
+	filePath?: string;
+}
+
 export class MindMapView extends ItemView {
 	mind: MindElixirInstance | null = null;
 	file: TFile | null = null;
-	data: string = "";
 	settings: MindMapSettings;
 
 	constructor(leaf: WorkspaceLeaf, settings: MindMapSettings) {
@@ -21,10 +24,34 @@ export class MindMapView extends ItemView {
 	}
 
 	getDisplayText() {
-		return this.file ? this.file.basename : "Mind Map";
+		return this.file ? this.file.basename + " Mind Map" : "Mind Map";
+	}
+
+	getState() {
+		console.log("getState", this.file?.path);
+		// Save the file path so it can be restored when splitting
+		return {
+			filePath: this.file?.path,
+		};
+	}
+
+	async setState(state: MindMapViewState) {
+		console.log("setState", state);
+		// Restore the file when the view is reopened or split
+		if (state.filePath) {
+			const file = this.app.vault.getAbstractFileByPath(state.filePath);
+			if (file instanceof TFile) {
+				this.file = file;
+				// If view is already open, render immediately
+				if (this.mind) {
+					await this.render();
+				}
+			}
+		}
 	}
 
 	async onOpen() {
+		console.log("onOpen", this.file?.path);
 		const container = this.containerEl.children[1] as HTMLElement;
 		container.empty();
 
@@ -50,13 +77,9 @@ export class MindMapView extends ItemView {
 	}
 
 	async onClose() {
+		console.log("onClose", this.file?.path);
 		// Cleanup
-	}
-
-	async setFile(file: TFile) {
-		this.file = file;
-		this.data = await this.app.vault.read(file);
-		await this.render();
+		this.mind?.destroy();
 	}
 
 	async render() {

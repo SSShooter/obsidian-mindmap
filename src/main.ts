@@ -61,19 +61,18 @@ export default class MindMapPlugin extends Plugin {
 	}
 
 	async activateView(file: TFile) {
-		// Create a new leaf for the mindmap
-		const leaf = this.app.workspace.getLeaf(true);
+		// Create a new leaf for the mindmap in split right mode
+		const leaf = this.app.workspace.getLeaf("split", "vertical");
 
 		await leaf.setViewState({
 			type: VIEW_TYPE_MINDMAP,
 			active: true,
+			state: { filePath: file.path },
 		});
 
-		// Get the view instance and set the file
+		// Ensure settings are up to date in the view
 		if (leaf.view instanceof MindMapView) {
-			// Ensure settings are up to date in the view
 			leaf.view.settings = this.settings;
-			await leaf.view.setFile(file);
 		}
 
 		// Reveal the leaf
