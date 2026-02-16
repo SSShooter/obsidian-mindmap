@@ -12,6 +12,10 @@ interface TreeItem {
 	type: string;
 }
 
+function generateId(): string {
+	return Math.random().toString(36).substr(2, 9);
+}
+
 /**
  * Parse markdown content using remark AST
  */
@@ -253,8 +257,4 @@ export function parsePlaintext(
 			children: [],
 		},
 	};
-}
-
-function generateId(): string {
-	return Math.random().toString(36).substr(2, 9);
 }

@@ -13,6 +13,7 @@ export class MindMapView extends ItemView {
 	mind: MindElixirInstance | null = null;
 	file: TFile | null = null;
 	settings: MindMapSettings;
+	private debounceTimer: NodeJS.Timeout | null = null;
 
 	constructor(leaf: WorkspaceLeaf, settings: MindMapSettings) {
 		super(leaf);
@@ -63,12 +64,21 @@ export class MindMapView extends ItemView {
 		this.mind = new MindElixir({
 			el: mapDiv,
 			direction: MindElixir.RIGHT,
-			draggable: true,
+			editable: false,
 			contextMenu: true,
 			toolBar: true,
 			keypress: true,
 			selectionContainer: "body",
 		});
+
+		// Register file modification listener with debounce
+		this.registerEvent(
+			this.app.vault.on("modify", (file) => {
+				if (file === this.file) {
+					this.debouncedUpdate();
+				}
+			}),
+		);
 
 		// If we already have a file, render it
 		if (this.file) {
@@ -78,11 +88,29 @@ export class MindMapView extends ItemView {
 
 	async onClose() {
 		console.log("onClose", this.file?.path);
+		// Clear any pending debounce timer
+		if (this.debounceTimer) {
+			clearTimeout(this.debounceTimer);
+			this.debounceTimer = null;
+		}
 		// Cleanup
 		this.mind?.destroy();
 	}
 
-	async render() {
+	private debouncedUpdate() {
+		// Clear existing timer
+		if (this.debounceTimer) {
+			clearTimeout(this.debounceTimer);
+		}
+
+		// Set new timer to update after 300ms of inactivity
+		this.debounceTimer = setTimeout(() => {
+			this.render(true);
+			this.debounceTimer = null;
+		}, 1000);
+	}
+
+	async render(isRefresh: boolean = false) {
 		if (!this.mind || !this.file) return;
 
 		const data = await this.app.vault.read(this.file);
@@ -98,10 +126,10 @@ export class MindMapView extends ItemView {
 				this.settings.h1AsRoot,
 			);
 		}
-
-		this.mind.init(mindData);
-
-		// Refresh seems to be needed if init was already called, but init handles re-init usually?
-		// Mind Elixir init(data) usually resets.
+		if (isRefresh) {
+			this.mind.refresh(mindData);
+		} else {
+			this.mind.init(mindData);
+		}
 	}
 }
