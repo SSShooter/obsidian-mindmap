@@ -1,16 +1,50 @@
-# Obsidian Sample Plugin
+# Obsidian Mind Map
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An intuitive mind map plugin for Obsidian that transforms your markdown documents into interactive mind maps using [Mind Elixir](https://github.com/ssshooter/mind-elixir-core).
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Features
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+### Mind Map View
+
+- **Open as Mind Map**: Transform any markdown file into an interactive mind map view
+- **Smart Parsing**: Automatically parses markdown headers and lists into hierarchical mind map nodes
+- **Split View**: Opens mind maps in a split pane while preserving your original document
+- **Auto-Refresh**: Mind map updates automatically when the source file changes
+- **Customizable Root**: Choose between using the filename or the first H1 heading as the root node
+
+### Code Block Rendering
+
+- **Inline Mind Maps**: Embed mind maps directly in your notes using `mindelixir` code blocks
+- **Plain Text Format**: Use simple indented text format for quick mind map creation
+- **Non-Intrusive**: Mind maps render seamlessly within your markdown content
+
+## Usage
+
+### Method 1: Mind Map View
+
+1. Open any markdown file in Obsidian
+2. Click the mind map icon in the ribbon, or
+3. Use the command palette: `Mind Map: Open as Mind Map`
+4. Your markdown content will open as an interactive mind map in a split pane
+
+### Method 2: Code Blocks
+
+Create inline mind maps using the `mindelixir` code block:
+
+````markdown
+```mindelixir
+Root Topic
+  Subtopic 1
+    Detail 1
+    Detail 2
+  Subtopic 2
+    Detail 3
+```
+````
+
+## Settings
+
+- **Use first H1 as root**: When enabled, uses the first H1 heading as the root node instead of the filename. Content before the first H1 will be ignored.
 
 ## First time developing plugins?
 
@@ -56,7 +90,8 @@ Quick starting guide for new plugin devs:
 - Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
 
 ## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
+
+- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code.
 - This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
 - Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
 - A GitHub action is preconfigured to automatically lint every commit on all branches.
@@ -69,7 +104,7 @@ The simple way is to set the `fundingUrl` field to your link in your `manifest.j
 
 ```json
 {
-    "fundingUrl": "https://buymeacoffee.com"
+	"fundingUrl": "https://buymeacoffee.com"
 }
 ```
 
@@ -77,11 +112,11 @@ If you have multiple URLs, you can also do:
 
 ```json
 {
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://buymeacoffee.com",
+		"GitHub Sponsor": "https://github.com/sponsors",
+		"Patreon": "https://www.patreon.com/"
+	}
 }
 ```
 
