@@ -199,20 +199,13 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 		const item = items[i]!;
 		const node = {} as NodeObj;
 		nodes.push(node);
-		// Set topic based on item type
-		if (item.type === "heading") {
-			node.topic = extractText(item.object);
-		} else if (item.type === "paragraph") {
-			node.topic = extractText(item.object);
-		} else if (item.type === "code") {
-			node.topic = extractText(item.object);
-		} else if (item.type === "Blockquote") {
-			const quote = item.object as Blockquote;
-			node.topic = "> " + extractText(quote);
-		} else if (item.type === "list") {
+		if (item.type === "list") {
 			node.children = processList(item.object as List);
 			node.topic = "List";
 			continue;
+		} else {
+			console.log(item);
+			node.topic = extractText(item.object);
 		}
 
 		// Generate ID
