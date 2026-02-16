@@ -23,9 +23,9 @@ export class MindMapSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Use first H1 as root")
+			.setName("Use first level 1 heading as root")
 			.setDesc(
-				"When enabled, uses the first H1 heading as the root node instead of the filename. Content before the first H1 will be ignored.",
+				"When enabled, uses the first level 1 heading as the root node instead of the filename. Content before the first level 1 heading will be ignored.",
 			)
 			.addToggle((toggle) =>
 				toggle

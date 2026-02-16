@@ -1,0 +1,20 @@
+/* Mind Map View Container */
+.mindmap-container {
+	height: 100%;
+	width: 100%;
+}
+
+/* Mind Elixir Code Block Container */
+.mindelixir-codeblock-container {
+	width: 100%;
+	height: 600px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+/* Error message styling */
+.mindelixir-error {
+	color: var(--text-error);
+	padding: 1rem;
+}

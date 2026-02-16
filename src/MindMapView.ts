@@ -13,7 +13,7 @@ export class MindMapView extends ItemView {
 	mind: MindElixirInstance | null = null;
 	file: TFile | null = null;
 	settings: MindMapSettings;
-	private debounceTimer: NodeJS.Timeout | null = null;
+	private debounceTimer: number | null = null;
 
 	constructor(leaf: WorkspaceLeaf, settings: MindMapSettings) {
 		super(leaf);
@@ -29,7 +29,6 @@ export class MindMapView extends ItemView {
 	}
 
 	getState() {
-		console.log("getState", this.file?.path);
 		// Save the file path so it can be restored when splitting
 		return {
 			filePath: this.file?.path,
@@ -37,7 +36,6 @@ export class MindMapView extends ItemView {
 	}
 
 	async setState(state: MindMapViewState) {
-		console.log("setState", state);
 		// Restore the file when the view is reopened or split
 		if (state.filePath) {
 			const file = this.app.vault.getAbstractFileByPath(state.filePath);
@@ -52,13 +50,10 @@ export class MindMapView extends ItemView {
 	}
 
 	async onOpen() {
-		console.log("onOpen", this.file?.path);
 		const container = this.containerEl.children[1] as HTMLElement;
 		container.empty();
 
 		const mapDiv = container.createDiv({ cls: "mindmap-container" });
-		mapDiv.style.height = "100%";
-		mapDiv.style.width = "100%";
 
 		// Initialize MindElixir
 		this.mind = new MindElixir({
@@ -87,10 +82,9 @@ export class MindMapView extends ItemView {
 	}
 
 	async onClose() {
-		console.log("onClose", this.file?.path);
 		// Clear any pending debounce timer
 		if (this.debounceTimer) {
-			clearTimeout(this.debounceTimer);
+			window.clearTimeout(this.debounceTimer);
 			this.debounceTimer = null;
 		}
 		// Cleanup
@@ -100,12 +94,12 @@ export class MindMapView extends ItemView {
 	private debouncedUpdate() {
 		// Clear existing timer
 		if (this.debounceTimer) {
-			clearTimeout(this.debounceTimer);
+			window.clearTimeout(this.debounceTimer);
 		}
 
 		// Set new timer to update after 300ms of inactivity
-		this.debounceTimer = setTimeout(() => {
-			this.render(true);
+		this.debounceTimer = window.setTimeout(() => {
+			void this.render(true);
 			this.debounceTimer = null;
 		}, 1000);
 	}

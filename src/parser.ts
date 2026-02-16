@@ -3,7 +3,7 @@ import { plaintextToMindElixir } from "mind-elixir/plaintextConverter";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
-import type { Root, Heading, List, Paragraph, Blockquote, Parent } from "mdast";
+import type { Root, List, Parent } from "mdast";
 
 interface TreeItem {
 	children: TreeItem[];
@@ -13,7 +13,7 @@ interface TreeItem {
 }
 
 function generateId(): string {
-	return Math.random().toString(36).substr(2, 9);
+	return Math.random().toString(36).substring(2, 11);
 }
 
 /**
@@ -36,9 +36,7 @@ export function parseMarkdown(
 
 		if (h1AsRoot) {
 			const h1Index = tree.children.findIndex(
-				(child) =>
-					child.type === "heading" &&
-					(child.object as Heading).depth === 1,
+				(child) => child.type === "heading" && child.object.depth === 1,
 			);
 			if (h1Index !== -1) {
 				const h1 = tree.children[h1Index]!;
@@ -92,7 +90,7 @@ function markdownAstToTree(ast: Root): TreeItem {
 		if (!child) continue;
 
 		if (child.type === "heading") {
-			const heading = child as Heading;
+			const heading = child;
 			const data: TreeItem = {
 				type: heading.type,
 				object: heading,
@@ -120,7 +118,7 @@ function markdownAstToTree(ast: Root): TreeItem {
 			if ("children" in child) {
 				const data: TreeItem = {
 					type: child.type,
-					object: child,
+					object: child as Parent,
 					parent: current,
 					children: [],
 				};
@@ -147,11 +145,11 @@ function processList(list: List): NodeObj[] {
 		for (const child of listItem.children) {
 			if (child.type === "paragraph") {
 				// Extract text from paragraph
-				const paragraph = child as Paragraph;
+				const paragraph = child;
 				result.topic = extractText(paragraph);
 			} else if (child.type === "list") {
 				// Nested list
-				result.children = processList(child as List);
+				result.children = processList(child);
 			}
 		}
 
@@ -159,28 +157,35 @@ function processList(list: List): NodeObj[] {
 	});
 }
 
+interface NodeWithContent {
+	type: string;
+	value?: string;
+	children?: NodeWithContent[];
+}
+
 /**
  * Extract plain text from a node
  */
-function extractText(node: any): string {
+function extractText(node: unknown): string {
+	const n = node as NodeWithContent;
 	let text = "";
 
-	if (node.type === "text") {
-		return node.value;
+	if (n.type === "text" && n.value) {
+		return n.value;
 	}
 
-	if (node.children) {
-		for (const child of node.children) {
+	if (n.children) {
+		for (const child of n.children) {
 			text += extractText(child);
 		}
 	}
 
-	if (node.type === "inlineCode") {
-		return `\`${node.value}\``;
+	if (n.type === "inlineCode" && n.value) {
+		return `\`${n.value}\``;
 	}
 
-	if (node.type === "code") {
-		return node.value;
+	if (n.type === "code" && n.value) {
+		return n.value;
 	}
 
 	return text;
@@ -204,7 +209,6 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 			node.topic = "List";
 			continue;
 		} else {
-			console.log(item);
 			node.topic = extractText(item.object);
 		}
 

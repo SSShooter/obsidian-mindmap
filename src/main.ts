@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, TFile } from "obsidian";
+import { Plugin, TFile } from "obsidian";
 import { MindMapView, VIEW_TYPE_MINDMAP } from "./MindMapView";
 import {
 	MindMapSettings,
@@ -8,6 +8,7 @@ import {
 import MindElixir from "mind-elixir";
 import { parsePlaintext } from "./parser";
 import "mind-elixir/style.css";
+import "./styles.css";
 
 export default class MindMapPlugin extends Plugin {
 	settings: MindMapSettings;
@@ -22,12 +23,12 @@ export default class MindMapPlugin extends Plugin {
 
 		this.addCommand({
 			id: "open-mindmap",
-			name: "Open as Mind Map",
+			name: "Open",
 			checkCallback: (checking: boolean) => {
 				const file = this.app.workspace.getActiveFile();
 				if (file) {
 					if (!checking) {
-						this.activateView(file);
+						void this.activateView(file);
 					}
 					return true;
 				}
@@ -36,10 +37,10 @@ export default class MindMapPlugin extends Plugin {
 		});
 
 		// Optional: Ribbon icon
-		this.addRibbonIcon("map", "Open as Mind Map", () => {
+		this.addRibbonIcon("map", "Open as mind map", () => {
 			const file = this.app.workspace.getActiveFile();
 			if (file) {
-				this.activateView(file);
+				void this.activateView(file);
 			}
 		});
 
@@ -56,12 +57,7 @@ export default class MindMapPlugin extends Plugin {
 				const container = el.createDiv({
 					cls: "mindelixir-codeblock-container",
 				});
-				container.style.width = "100%";
-				container.style.height = "600px";
-				container.style.border =
-					"1px solid var(--background-modifier-border)";
-				container.style.borderRadius = "4px";
-				container.style.overflow = "hidden";
+
 				// Initialize Mind Elixir instance
 				try {
 					setTimeout(() => {
@@ -90,7 +86,7 @@ export default class MindMapPlugin extends Plugin {
 		);
 	}
 
-	async onunload() {
+	onunload() {
 		// Cleanup if needed
 	}
 
@@ -98,7 +94,7 @@ export default class MindMapPlugin extends Plugin {
 		this.settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
-			await this.loadData(),
+			(await this.loadData()) as Partial<MindMapSettings>,
 		);
 	}
 
@@ -122,6 +118,6 @@ export default class MindMapPlugin extends Plugin {
 		}
 
 		// Reveal the leaf
-		this.app.workspace.revealLeaf(leaf);
+		await this.app.workspace.revealLeaf(leaf);
 	}
 }
