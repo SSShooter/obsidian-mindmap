@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-mindmap",
-	"name": "Mind Map",
+	"id": "mindelixir-mindmap",
+	"name": "Mind Elixir Mind Map",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "A mind map plugin for Obsidian powered by Mind Elixir.",
+	"description": "A mind map plugin powered by Mind Elixir.",
 	"author": "Dexter Chow",
 	"authorUrl": "https://github.com/SSShooter",
 	"fundingUrl": {
