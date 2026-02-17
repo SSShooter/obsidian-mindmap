@@ -3,7 +3,7 @@
 	"name": "Mind Map",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "A mind map plugin for Obsidian.",
+	"description": "A mind map plugin for Obsidian powered by Mind Elixir.",
 	"author": "Dexter Chow",
 	"authorUrl": "https://github.com/SSShooter",
 	"fundingUrl": {
