@@ -54,7 +54,7 @@ export class MindMapView extends ItemView {
 		container.empty();
 
 		const mapDiv = container.createDiv({ cls: "mindmap-container" });
-
+		mapDiv.setAttribute("data-ignore-swipe", "true");
 		// Initialize MindElixir
 		this.mind = new MindElixir({
 			el: mapDiv,

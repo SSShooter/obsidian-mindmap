@@ -57,6 +57,7 @@ export default class MindMapPlugin extends Plugin {
 				const container = el.createDiv({
 					cls: "mindelixir-codeblock-container",
 				});
+				container.setAttribute("data-ignore-swipe", "true");
 
 				// Initialize Mind Elixir instance
 				try {
