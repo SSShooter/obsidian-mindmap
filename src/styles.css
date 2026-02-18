@@ -4,6 +4,10 @@
 	width: 100%;
 }
 
+.is-phone .mindmap-container .mind-elixir-toolbar.rb {
+	bottom: 70px;
+}
+
 /* Mind Elixir Code Block Container */
 .mindelixir-codeblock-container {
 	width: 100%;

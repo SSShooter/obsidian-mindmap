@@ -237,7 +237,7 @@ export function parsePlaintext(
 ): MindElixirData {
 	try {
 		// Use the library's converter
-		const data = plaintextToMindElixir(content);
+		const data = plaintextToMindElixir(content, filename);
 		return data;
 	} catch (e) {
 		console.error("Plaintext parse error", e);
