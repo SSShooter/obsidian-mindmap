@@ -6,6 +6,8 @@ An intuitive mind map plugin for Obsidian that transforms your markdown document
 
 ### Mind Map View
 
+![Mind Map View](./screenshots/ob-mindmap-open-mindmap.jpg)
+
 - **Open as Mind Map**: Transform any markdown file into an interactive mind map view
 - **Smart Parsing**: Automatically parses markdown headers and lists into hierarchical mind map nodes
 - **Split View**: Opens mind maps in a split pane while preserving your original document
@@ -13,6 +15,8 @@ An intuitive mind map plugin for Obsidian that transforms your markdown document
 - **Customizable Root**: Choose between using the filename or the first H1 heading as the root node
 
 ### Code Block Rendering
+
+![Code Block Rendering](./screenshots/ob-mindelixir-codeblock.gif)
 
 - **Inline Mind Maps**: Embed mind maps directly in your notes using `mindelixir` code blocks
 - **Plain Text Format**: Use simple indented text format for quick mind map creation
@@ -41,6 +45,8 @@ Root Topic
     Detail 3
 ```
 ````
+
+For the specific format specification, please refer to the [Mind Elixir Plain Text Format Reference](https://github.com/SSShooter/mind-elixir-core/blob/master/skills/plaintext-format/SKILL.md).
 
 ## Settings
 
