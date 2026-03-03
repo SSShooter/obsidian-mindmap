@@ -5,10 +5,14 @@ import {
 	DEFAULT_SETTINGS,
 	MindMapSettingTab,
 } from "./settings";
-import MindElixir from "mind-elixir";
+import MindElixir, { MindElixirInstance } from "mind-elixir";
 import { parsePlaintext } from "./parser";
 import "mind-elixir/style.css";
 import "./styles.css";
+
+interface MindElixirContainer extends HTMLDivElement {
+	mindElixirInstance?: MindElixirInstance;
+}
 
 export default class MindMapPlugin extends Plugin {
 	settings: MindMapSettings;
@@ -77,7 +81,8 @@ export default class MindMapPlugin extends Plugin {
 						});
 
 						mind.init(mindData);
-						(container as any).mindElixirInstance = mind;
+						(container as MindElixirContainer).mindElixirInstance =
+							mind;
 					}, 100);
 				} catch (error) {
 					console.error(
@@ -101,8 +106,9 @@ export default class MindMapPlugin extends Plugin {
 				document
 					.querySelectorAll(".mindelixir-codeblock-container")
 					.forEach((el) => {
-						const mind = (el as any).mindElixirInstance;
-						if (mind && typeof mind.changeTheme === "function") {
+						const mind = (el as MindElixirContainer)
+							.mindElixirInstance;
+						if (mind) {
 							mind.changeTheme(theme);
 						}
 					});
