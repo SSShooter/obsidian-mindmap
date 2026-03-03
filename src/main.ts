@@ -62,6 +62,8 @@ export default class MindMapPlugin extends Plugin {
 				// Initialize Mind Elixir instance
 				try {
 					setTimeout(() => {
+						const isDark =
+							document.body.classList.contains("theme-dark");
 						const mind = new MindElixir({
 							el: container,
 							direction: MindElixir.RIGHT,
@@ -69,9 +71,13 @@ export default class MindMapPlugin extends Plugin {
 							contextMenu: false,
 							toolBar: false,
 							keypress: false,
+							theme: isDark
+								? MindElixir.DARK_THEME
+								: MindElixir.THEME,
 						});
 
 						mind.init(mindData);
+						(container as any).mindElixirInstance = mind;
 					}, 100);
 				} catch (error) {
 					console.error(
@@ -84,6 +90,23 @@ export default class MindMapPlugin extends Plugin {
 					});
 				}
 			},
+		);
+
+		// Listen to theme changes
+		this.registerEvent(
+			this.app.workspace.on("css-change", () => {
+				const isDark = document.body.classList.contains("theme-dark");
+				const theme = isDark ? MindElixir.DARK_THEME : MindElixir.THEME;
+
+				document
+					.querySelectorAll(".mindelixir-codeblock-container")
+					.forEach((el) => {
+						const mind = (el as any).mindElixirInstance;
+						if (mind && typeof mind.changeTheme === "function") {
+							mind.changeTheme(theme);
+						}
+					});
+			}),
 		);
 	}
 

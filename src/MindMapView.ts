@@ -55,6 +55,7 @@ export class MindMapView extends ItemView {
 
 		const mapDiv = container.createDiv({ cls: "mindmap-container" });
 		mapDiv.setAttribute("data-ignore-swipe", "true");
+		const isDark = document.body.classList.contains("theme-dark");
 		// Initialize MindElixir
 		this.mind = new MindElixir({
 			el: mapDiv,
@@ -64,6 +65,7 @@ export class MindMapView extends ItemView {
 			toolBar: true,
 			keypress: true,
 			selectionContainer: "body",
+			theme: isDark ? MindElixir.DARK_THEME : MindElixir.THEME,
 		});
 
 		// Register file modification listener with debounce
@@ -71,6 +73,20 @@ export class MindMapView extends ItemView {
 			this.app.vault.on("modify", (file) => {
 				if (file === this.file) {
 					this.debouncedUpdate();
+				}
+			}),
+		);
+
+		// Register theme change listener
+		this.registerEvent(
+			this.app.workspace.on("css-change", () => {
+				const currentIsDark =
+					document.body.classList.contains("theme-dark");
+				const theme = currentIsDark
+					? MindElixir.DARK_THEME
+					: MindElixir.THEME;
+				if (this.mind) {
+					this.mind.changeTheme(theme);
 				}
 			}),
 		);
