@@ -518,3 +518,15 @@
   color: var(--text-error);
   padding: 1rem;
 }
+me-tpc .internal-link {
+  pointer-events: all;
+  color: var(--link-color);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s ease;
+}
+me-tpc .internal-link:hover {
+  color: var(--link-color-hover);
+  text-decoration-color: var(--link-color-hover);
+}

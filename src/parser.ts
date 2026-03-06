@@ -3,7 +3,19 @@ import { plaintextToMindElixir } from "mind-elixir/plaintextConverter";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
+import remarkRehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
 import type { Root, List, Parent } from "mdast";
+
+const htmlProcessor = unified().use(remarkRehype).use(rehypeStringify);
+
+export function replaceObsidianLinks(htmlStr: string): string {
+	return htmlStr.replace(/\[\[(.*?)\]\]/g, (match: string, p1: string) => {
+		const display = p1?.includes("|") ? p1.split("|")[1] : p1;
+		const href = p1?.split("|")[0];
+		return `<a class="internal-link" data-href="${href}">${display}</a>`;
+	});
+}
 
 interface TreeItem {
 	children: TreeItem[];
@@ -27,7 +39,6 @@ export function parseMarkdown(
 	try {
 		// Parse markdown to AST
 		const ast = unified().use(remarkParse).use(remarkGfm).parse(content);
-
 		// Build tree structure from AST
 		const tree = markdownAstToTree(ast);
 
@@ -115,15 +126,13 @@ function markdownAstToTree(ast: Root): TreeItem {
 			}
 		} else {
 			// For non-heading content (paragraphs, lists, code, etc.)
-			if ("children" in child) {
-				const data: TreeItem = {
-					type: child.type,
-					object: child as Parent,
-					parent: current,
-					children: [],
-				};
-				current.children.push(data);
-			}
+			const data: TreeItem = {
+				type: child.type,
+				object: child as Parent,
+				parent: current,
+				children: [],
+			};
+			current.children.push(data);
 		}
 	}
 
@@ -146,7 +155,19 @@ function processList(list: List): NodeObj[] {
 			if (child.type === "paragraph") {
 				// Extract text from paragraph
 				const paragraph = child;
-				result.topic = extractText(paragraph);
+				// result.topic = extractText(paragraph);
+				try {
+					const hastNode = htmlProcessor.runSync(
+						paragraph as unknown as Root,
+					);
+					const htmlStr = htmlProcessor.stringify(hastNode);
+					if (typeof htmlStr === "string") {
+						result.dangerouslySetInnerHTML =
+							replaceObsidianLinks(htmlStr);
+					}
+				} catch (e) {
+					console.error("HTML conversion error", e);
+				}
 			} else if (child.type === "list") {
 				// Nested list
 				result.children = processList(child);
@@ -209,7 +230,25 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 			node.topic = "List";
 			continue;
 		} else {
-			node.topic = extractText(item.object);
+			if (item.type === "html") {
+				node.dangerouslySetInnerHTML = (
+					item.object as NodeWithContent
+				).value;
+			} else {
+				// node.topic = extractText(item.object);
+				try {
+					const hastNode = htmlProcessor.runSync(
+						item.object as unknown as Root,
+					);
+					const htmlStr = htmlProcessor.stringify(hastNode);
+					if (typeof htmlStr === "string") {
+						node.dangerouslySetInnerHTML =
+							replaceObsidianLinks(htmlStr);
+					}
+				} catch (e) {
+					console.error("HTML conversion error", e);
+				}
+			}
 		}
 
 		// Generate ID

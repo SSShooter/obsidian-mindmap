@@ -1,7 +1,8 @@
 import { ItemView, WorkspaceLeaf, TFile } from "obsidian";
-import MindElixir, { MindElixirInstance } from "mind-elixir";
+import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { parseMarkdown, parsePlaintext } from "./parser";
 import { MindMapSettings } from "./settings";
+import { handleMindmapClick } from "./utils";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
 
@@ -55,9 +56,14 @@ export class MindMapView extends ItemView {
 
 		const mapDiv = container.createDiv({ cls: "mindmap-container" });
 		mapDiv.setAttribute("data-ignore-swipe", "true");
+		// Add click listener for internal links and nodes
+		mapDiv.addEventListener("click", (e) => {
+			handleMindmapClick(this.app, e, this.file?.path || "");
+		});
+
 		const isDark = document.body.classList.contains("theme-dark");
 		// Initialize MindElixir
-		this.mind = new MindElixir({
+		const options: Options = {
 			el: mapDiv,
 			direction: MindElixir.RIGHT,
 			editable: false,
@@ -66,7 +72,9 @@ export class MindMapView extends ItemView {
 			keypress: true,
 			selectionContainer: "body",
 			theme: isDark ? MindElixir.DARK_THEME : MindElixir.THEME,
-		});
+		};
+
+		this.mind = new MindElixir(options);
 
 		// Register file modification listener with debounce
 		this.registerEvent(

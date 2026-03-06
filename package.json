@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-mindmap",
-	"version": "1.2.0",
+	"version": "2.0.0",
 	"description": "An intuitive mind map plugin for Obsidian.",
 	"main": "main.js",
 	"type": "module",
@@ -30,6 +30,8 @@
 		"remark": "^15.0.1",
 		"remark-gfm": "^4.0.0",
 		"remark-parse": "^11.0.0",
+		"remark-rehype": "^11.1.1",
+		"rehype-stringify": "^10.0.1",
 		"unified": "^11.0.0",
 		"unist-util-visit": "^5.0.0"
 	}

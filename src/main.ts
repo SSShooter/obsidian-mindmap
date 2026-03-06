@@ -5,10 +5,11 @@ import {
 	DEFAULT_SETTINGS,
 	MindMapSettingTab,
 } from "./settings";
-import MindElixir, { MindElixirInstance } from "mind-elixir";
+import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { parsePlaintext } from "./parser";
 import "mind-elixir/style.css";
 import "./styles.css";
+import { handleMindmapClick } from "./utils";
 
 interface MindElixirContainer extends HTMLDivElement {
 	mindElixirInstance?: MindElixirInstance;
@@ -63,12 +64,17 @@ export default class MindMapPlugin extends Plugin {
 				});
 				container.setAttribute("data-ignore-swipe", "true");
 
+				// Add click listener for internal links and nodes
+				container.addEventListener("click", (e) => {
+					handleMindmapClick(this.app, e, ctx.sourcePath);
+				});
+
 				// Initialize Mind Elixir instance
 				try {
 					setTimeout(() => {
 						const isDark =
 							document.body.classList.contains("theme-dark");
-						const mind = new MindElixir({
+						const options: Options = {
 							el: container,
 							direction: MindElixir.RIGHT,
 							editable: false,
@@ -78,7 +84,8 @@ export default class MindMapPlugin extends Plugin {
 							theme: isDark
 								? MindElixir.DARK_THEME
 								: MindElixir.THEME,
-						});
+						};
+						const mind = new MindElixir(options);
 
 						mind.init(mindData);
 						(container as MindElixirContainer).mindElixirInstance =
