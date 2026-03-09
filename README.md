@@ -67,3 +67,4 @@ For the specific format specification, please refer to the [Mind Elixir Plain Te
 - Support node copy and paste
 - Support reverse edit in `mindelixir` code block
 - Record links delta if modified
+- Support image in mind map

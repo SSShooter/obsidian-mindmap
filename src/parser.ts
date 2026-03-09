@@ -51,7 +51,8 @@ export function parseMarkdown(
 			);
 			if (h1Index !== -1) {
 				const h1 = tree.children[h1Index]!;
-				rootTopic = extractText(h1.object);
+				// rootTopic = extractText(h1.object);
+				rootTopic = (h1.object as unknown as NodeWithContent).value!;
 				nodes = treeToMindElixir(h1.children);
 			} else {
 				nodes = treeToMindElixir(tree.children);
@@ -185,34 +186,6 @@ interface NodeWithContent {
 }
 
 /**
- * Extract plain text from a node
- */
-function extractText(node: unknown): string {
-	const n = node as NodeWithContent;
-	let text = "";
-
-	if (n.type === "text" && n.value) {
-		return n.value;
-	}
-
-	if (n.children) {
-		for (const child of n.children) {
-			text += extractText(child);
-		}
-	}
-
-	if (n.type === "inlineCode" && n.value) {
-		return `\`${n.value}\``;
-	}
-
-	if (n.type === "code" && n.value) {
-		return n.value;
-	}
-
-	return text;
-}
-
-/**
  * Convert tree structure to MindElixir format
  * This implements the key feature: merging lists into preceding content
  */
@@ -235,7 +208,6 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 					item.object as NodeWithContent
 				).value;
 			} else {
-				// node.topic = extractText(item.object);
 				try {
 					const hastNode = htmlProcessor.runSync(
 						item.object as unknown as Root,
@@ -277,33 +249,6 @@ export function parsePlaintext(
 	try {
 		// Use the library's converter
 		const data = plaintextToMindElixir(content, filename);
-
-		if (data.nodeData) {
-			const processNode = (node: NodeObj) => {
-				if (node.topic) {
-					try {
-						const mdast = unified()
-							.use(remarkParse)
-							.use(remarkGfm)
-							.parse(node.topic);
-						const hastNode = htmlProcessor.runSync(mdast);
-						const htmlStr = htmlProcessor.stringify(hastNode);
-						if (typeof htmlStr === "string") {
-							node.dangerouslySetInnerHTML =
-								replaceObsidianLinks(htmlStr);
-						}
-					} catch (e) {
-						console.error("HTML conversion error", e);
-					}
-				}
-				const children = node.children || [];
-				for (let i = 0; i < children.length; i++) {
-					processNode(children[i]!);
-				}
-			};
-			processNode(data.nodeData);
-		}
-
 		return data;
 	} catch (e) {
 		console.error("Plaintext parse error", e);

@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf, TFile, Scope } from "obsidian";
 import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
-import { parseMarkdown, parsePlaintext } from "./parser";
+import { parseMarkdown, parsePlaintext, replaceObsidianLinks } from "./parser";
 import { MindMapSettings } from "./settings";
 import { handleMindmapClick } from "./utils";
 
@@ -95,6 +95,9 @@ export class MindMapView extends ItemView {
 			keypress: true,
 			selectionContainer: "body",
 			theme: isDark ? MindElixir.DARK_THEME : MindElixir.THEME,
+			markdown: (str) => {
+				return replaceObsidianLinks(str);
+			},
 		};
 
 		this.mind = new MindElixir(options);
