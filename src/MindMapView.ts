@@ -1,5 +1,6 @@
-import { ItemView, WorkspaceLeaf, TFile } from "obsidian";
+import { ItemView, WorkspaceLeaf, TFile, Scope } from "obsidian";
 import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
+import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
 import { parseMarkdown, parsePlaintext } from "./parser";
 import { MindMapSettings } from "./settings";
 import { handleMindmapClick } from "./utils";
@@ -15,6 +16,10 @@ export class MindMapView extends ItemView {
 	file: TFile | null = null;
 	settings: MindMapSettings;
 	private debounceTimer: number | null = null;
+	/** Whether the currently loaded file is Mind Elixir plaintext format */
+	private isPlaintext: boolean = false;
+	/** Flag to prevent re-render loop when we write back to the file */
+	private isSavingFromMindmap: boolean = false;
 
 	constructor(leaf: WorkspaceLeaf, settings: MindMapSettings) {
 		super(leaf);
@@ -51,6 +56,23 @@ export class MindMapView extends ItemView {
 	}
 
 	async onOpen() {
+		// 注册只在当前 View 生效的 F2 以防止触发 Obsidian 的重命名文件
+		this.scope = new Scope(this.app.scope);
+		this.scope.register([], "F2", (evt) => {
+			evt.preventDefault();
+			if (this.mind && this.mind.editable) {
+				const md = this.mind;
+				if (md.currentSummary) {
+					md.editSummary(md.currentSummary);
+				} else if (md.currentArrow) {
+					md.editArrowLabel(md.currentArrow);
+				} else {
+					md.beginEdit();
+				}
+			}
+			return false; // 阻止冒泡到全局
+		});
+
 		const container = this.containerEl.children[1] as HTMLElement;
 		container.empty();
 
@@ -63,6 +85,7 @@ export class MindMapView extends ItemView {
 
 		const isDark = document.body.classList.contains("theme-dark");
 		// Initialize MindElixir
+		// editable will be set to true later in render() if file is plaintext format
 		const options: Options = {
 			el: mapDiv,
 			direction: MindElixir.RIGHT,
@@ -80,10 +103,18 @@ export class MindMapView extends ItemView {
 		this.registerEvent(
 			this.app.vault.on("modify", (file) => {
 				if (file === this.file) {
+					// Skip re-render if we triggered the save ourselves
+					if (this.isSavingFromMindmap) return;
 					this.debouncedUpdate();
 				}
 			}),
 		);
+
+		// Register mind-elixir operation events to write back to plaintext file
+		const mindmapOperationHandler = () => {
+			void this.savePlaintextFromMindmap();
+		};
+		this.mind.bus.addListener("operation", mindmapOperationHandler);
 
 		// Register theme change listener
 		this.registerEvent(
@@ -136,18 +167,51 @@ export class MindMapView extends ItemView {
 		// Heuristic: If content has Markdown headers, use Markdown parser.
 		// Otherwise (or if it looks like Mind Elixir Plaintext), use Plaintext parser which supports advanced features.
 		if (data.startsWith("- ")) {
+			this.isPlaintext = true;
 			mindData = parsePlaintext(data, this.file.basename);
 		} else {
+			this.isPlaintext = false;
 			mindData = parseMarkdown(
 				data,
 				this.file.basename,
 				this.settings.h1AsRoot,
 			);
 		}
+
+		// Enable or disable editing based on format
+		if (this.mind.editable !== this.isPlaintext) {
+			this.mind.editable = this.isPlaintext;
+		}
+
 		if (isRefresh) {
 			this.mind.refresh(mindData);
 		} else {
 			this.mind.init(mindData);
+		}
+	}
+
+	/**
+	 * Converts the current mind map data back to plaintext and saves it to the file.
+	 * Only runs when the file is in Mind Elixir plaintext format.
+	 */
+	private async savePlaintextFromMindmap() {
+		if (!this.isPlaintext || !this.mind || !this.file) return;
+
+		try {
+			const mindData = this.mind.getData();
+			const plaintext = mindElixirToPlaintext(mindData);
+
+			// Set flag so our own file-modify event doesn't trigger re-render
+			this.isSavingFromMindmap = true;
+			await this.app.vault.modify(this.file, plaintext);
+		} catch (e) {
+			console.error("MindMapView: failed to save plaintext", e);
+		} finally {
+			// Use a short delay before clearing the flag to ensure the
+			// vault modify event has been processed
+			window.setTimeout(() => {
+				this.isSavingFromMindmap = false;
+			}, 300);
 		}
 	}
 }

@@ -277,6 +277,33 @@ export function parsePlaintext(
 	try {
 		// Use the library's converter
 		const data = plaintextToMindElixir(content, filename);
+
+		if (data.nodeData) {
+			const processNode = (node: NodeObj) => {
+				if (node.topic) {
+					try {
+						const mdast = unified()
+							.use(remarkParse)
+							.use(remarkGfm)
+							.parse(node.topic);
+						const hastNode = htmlProcessor.runSync(mdast);
+						const htmlStr = htmlProcessor.stringify(hastNode);
+						if (typeof htmlStr === "string") {
+							node.dangerouslySetInnerHTML =
+								replaceObsidianLinks(htmlStr);
+						}
+					} catch (e) {
+						console.error("HTML conversion error", e);
+					}
+				}
+				const children = node.children || [];
+				for (let i = 0; i < children.length; i++) {
+					processNode(children[i]!);
+				}
+			};
+			processNode(data.nodeData);
+		}
+
 		return data;
 	} catch (e) {
 		console.error("Plaintext parse error", e);

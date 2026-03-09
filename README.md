@@ -61,3 +61,9 @@ For the specific format specification, please refer to the [Mind Elixir Plain Te
 ## Manually installing the plugin
 
 - Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+
+## TODO
+
+- Support node copy and paste
+- Support reverse edit in `mindelixir` code block
+- Record links delta if modified

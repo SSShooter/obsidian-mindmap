@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "Mind Elixir Plaintext Format": {
+      "source": "ssshooter/mind-elixir-core",
+      "sourceType": "github",
+      "computedHash": "249dae11f2ed53b06134d0d4fd2128ae4121908a2038541f02df5744d381824b"
+    }
+  }
+}
