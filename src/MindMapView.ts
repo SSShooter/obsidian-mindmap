@@ -67,7 +67,7 @@ export class MindMapView extends ItemView {
 				} else if (md.currentArrow) {
 					md.editArrowLabel(md.currentArrow);
 				} else {
-					md.beginEdit();
+					void md.beginEdit();
 				}
 			}
 			return false; // 阻止冒泡到全局
