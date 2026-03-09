@@ -150,28 +150,28 @@ function processList(list: List): NodeObj[] {
 			children: [],
 		};
 
-		// Process each child of the list item
-		for (const child of listItem.children) {
-			if (child.type === "paragraph") {
-				// Extract text from paragraph
-				const paragraph = child;
-				// result.topic = extractText(paragraph);
-				try {
-					const hastNode = htmlProcessor.runSync(
-						paragraph as unknown as Root,
-					);
-					const htmlStr = htmlProcessor.stringify(hastNode);
-					if (typeof htmlStr === "string") {
-						result.dangerouslySetInnerHTML =
-							replaceObsidianLinks(htmlStr);
-					}
-				} catch (e) {
-					console.error("HTML conversion error", e);
+		// children[0] is always the content node (paragraph, etc.)
+		const contentNode = listItem.children[0];
+		// children[1] is the nested list, if any
+		const nestedList = listItem.children[1];
+
+		if (contentNode) {
+			try {
+				const hastNode = htmlProcessor.runSync(
+					contentNode as unknown as Root,
+				);
+				const htmlStr = htmlProcessor.stringify(hastNode);
+				if (typeof htmlStr === "string") {
+					result.dangerouslySetInnerHTML =
+						replaceObsidianLinks(htmlStr);
 				}
-			} else if (child.type === "list") {
-				// Nested list
-				result.children = processList(child);
+			} catch (e) {
+				console.error("HTML conversion error", e);
 			}
+		}
+
+		if (nestedList && nestedList.type === "list") {
+			result.children = processList(nestedList);
 		}
 
 		return result;
