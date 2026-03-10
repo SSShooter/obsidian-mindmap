@@ -96,11 +96,12 @@ function markdownAstToTree(ast: Root): TreeItem {
 	};
 
 	let current = treeItem;
-
 	for (let i = 0; i < children.length; i++) {
 		const child = children[i];
 		if (!child) continue;
-
+		if (child.type === "thematicBreak") {
+			continue;
+		}
 		if (child.type === "heading") {
 			const heading = child;
 			const data: TreeItem = {
