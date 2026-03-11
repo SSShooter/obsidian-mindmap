@@ -1,3 +1,5 @@
+[English](README.md) | [中文](README_zh.md)
+
 # Obsidian Mind Map
 
 An intuitive mind map plugin for Obsidian that transforms your markdown documents into interactive mind maps using [Mind Elixir](https://github.com/ssshooter/mind-elixir-core).
