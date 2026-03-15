@@ -1,4 +1,20 @@
-import { App } from "obsidian";
+import { App, moment } from "obsidian";
+import * as mindElixirI18n from "mind-elixir/i18n";
+
+export function getMindElixirLocale(): mindElixirI18n.LangPack {
+	const obLocale = moment.locale();
+	if (obLocale === "zh-cn") return mindElixirI18n.zh_CN;
+	if (obLocale === "zh-tw") return mindElixirI18n.zh_TW;
+	
+	const key = obLocale.replace(/-/g, "_");
+	if (Object.prototype.hasOwnProperty.call(mindElixirI18n, key)) {
+		const langPack = (mindElixirI18n as Record<string, mindElixirI18n.LangPack>)[key];
+		if (langPack) return langPack;
+	}
+	
+	return mindElixirI18n.en;
+}
+
 
 export function handleMindmapClick(
 	app: App,

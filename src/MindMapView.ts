@@ -3,7 +3,7 @@ import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
 import { parseMarkdown, parsePlaintext, replaceObsidianLinks } from "./parser";
 import { MindMapSettings } from "./settings";
-import { handleMindmapClick } from "./utils";
+import { getMindElixirLocale, handleMindmapClick } from "./utils";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
 
@@ -90,7 +90,7 @@ export class MindMapView extends ItemView {
 			el: mapDiv,
 			direction: MindElixir.RIGHT,
 			editable: false,
-			contextMenu: true,
+			contextMenu: { locale: getMindElixirLocale() },
 			toolBar: true,
 			keypress: true,
 			selectionContainer: "body",
