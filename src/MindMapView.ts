@@ -20,6 +20,7 @@ export class MindMapView extends ItemView {
 	private isPlaintext: boolean = false;
 	/** Flag to prevent re-render loop when we write back to the file */
 	private isSavingFromMindmap: boolean = false;
+	private arrowTimer: number | null = null;
 
 	constructor(leaf: WorkspaceLeaf, settings: MindMapSettings) {
 		super(leaf);
@@ -119,6 +120,15 @@ export class MindMapView extends ItemView {
 		};
 		this.mind.bus.addListener("operation", mindmapOperationHandler);
 
+		// Register arrow movement events to write back to plaintext file with throttling
+		this.mind.bus.addListener("updateArrowDelta", () => {
+			if (this.arrowTimer) return;
+			this.arrowTimer = window.setTimeout(() => {
+				void this.savePlaintextFromMindmap();
+				this.arrowTimer = null;
+			}, 2000);
+		});
+
 		// Register theme change listener
 		this.registerEvent(
 			this.app.workspace.on("css-change", () => {
@@ -144,6 +154,11 @@ export class MindMapView extends ItemView {
 		if (this.debounceTimer) {
 			window.clearTimeout(this.debounceTimer);
 			this.debounceTimer = null;
+		}
+		// Clear any pending arrow timer
+		if (this.arrowTimer) {
+			window.clearTimeout(this.arrowTimer);
+			this.arrowTimer = null;
 		}
 		// Cleanup
 		this.mind?.destroy();
