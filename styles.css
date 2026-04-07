@@ -513,6 +513,39 @@
   border: 1px solid var(--background-modifier-border);
   border-radius: 4px;
   overflow: hidden;
+  position: relative;
+}
+.mindelixir-export-btn {
+  position: absolute;
+  top: 4px;
+  right: 40px;
+  z-index: 200;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease-in-out,
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out;
+}
+.mindelixir-export-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.markdown-rendered:hover .mindelixir-export-btn,
+.cm-embed-block:hover .mindelixir-export-btn,
+.mindelixir-codeblock-container:hover .mindelixir-export-btn,
+.mindelixir-export-btn:hover {
+  opacity: 1 !important;
+}
+.mindelixir-export-btn:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
 }
 .mindelixir-error {
   color: var(--text-error);

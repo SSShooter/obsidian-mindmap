@@ -4,6 +4,7 @@ import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
 import { parseMarkdown, parsePlaintext, replaceObsidianLinks } from "./parser";
 import { MindMapSettings } from "./settings";
 import { getMindElixirLocale, handleMindmapClick } from "./utils";
+import { downloadImage } from "@mind-elixir/export-mindmap";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
 
@@ -72,6 +73,13 @@ export class MindMapView extends ItemView {
 				}
 			}
 			return false; // 阻止冒泡到全局
+		});
+
+		// Add export image button in view header
+		this.addAction("download", "Export as image", () => {
+			if (this.mind) {
+				downloadImage(this.mind, "png");
+			}
 		});
 
 		const container = this.containerEl.children[1] as HTMLElement;

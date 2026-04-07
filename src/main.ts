@@ -1,5 +1,6 @@
-import { Plugin, TFile } from "obsidian";
+import { Plugin, TFile, setIcon } from "obsidian";
 import { MindMapView, VIEW_TYPE_MINDMAP } from "./MindMapView";
+import { downloadImage } from "@mind-elixir/export-mindmap";
 import {
 	MindMapSettings,
 	DEFAULT_SETTINGS,
@@ -90,6 +91,17 @@ export default class MindMapPlugin extends Plugin {
 						mind.init(mindData);
 						(container as MindElixirContainer).mindElixirInstance =
 							mind;
+
+						// Add export button to the container
+						const exportBtn = container.createDiv({
+							cls: "mindelixir-export-btn",
+						});
+						exportBtn.setAttribute("aria-label", "Export as Image");
+						setIcon(exportBtn, "download");
+						exportBtn.onclick = (e) => {
+							e.stopPropagation();
+							downloadImage(mind, "png");
+						};
 					}, 100);
 				} catch (error) {
 					console.error(

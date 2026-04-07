@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-mindmap",
-	"version": "2.0.0",
+	"version": "3.1.0",
 	"description": "An intuitive mind map plugin for Obsidian.",
 	"main": "main.js",
 	"type": "module",
@@ -24,6 +24,7 @@
 		"typescript-eslint": "8.35.1"
 	},
 	"dependencies": {
+		"@mind-elixir/export-mindmap": "^0.1.2",
 		"@types/mdast": "^4.0.4",
 		"mind-elixir": "5.10.0",
 		"obsidian": "latest",
