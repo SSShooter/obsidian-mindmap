@@ -96,11 +96,11 @@ export default class MindMapPlugin extends Plugin {
 						const exportBtn = container.createDiv({
 							cls: "mindelixir-export-btn",
 						});
-						exportBtn.setAttribute("aria-label", "Export as Image");
+						exportBtn.setAttribute("aria-label", "Export as image");
 						setIcon(exportBtn, "download");
 						exportBtn.onclick = (e) => {
 							e.stopPropagation();
-							downloadImage(mind, "png");
+							void downloadImage(mind, "png");
 						};
 					}, 100);
 				} catch (error) {

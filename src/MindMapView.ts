@@ -78,7 +78,7 @@ export class MindMapView extends ItemView {
 		// Add export image button in view header
 		this.addAction("download", "Export as image", () => {
 			if (this.mind) {
-				downloadImage(this.mind, "png");
+				void downloadImage(this.mind, "png");
 			}
 		});
 
