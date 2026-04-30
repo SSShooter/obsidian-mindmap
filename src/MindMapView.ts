@@ -3,7 +3,7 @@ import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
 import { parseMarkdown, parsePlaintext, replaceObsidianLinks } from "./parser";
 import { MindMapSettings } from "./settings";
-import { getMindElixirLocale, handleMindmapClick } from "./utils";
+import { getMindElixirLocale, handleMindmapClick, renderMath } from "./utils";
 import { downloadImage } from "@mind-elixir/export-mindmap";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
@@ -105,7 +105,8 @@ export class MindMapView extends ItemView {
 			selectionContainer: "body",
 			theme: isDark ? MindElixir.DARK_THEME : MindElixir.THEME,
 			markdown: (str) => {
-				return replaceObsidianLinks(str);
+				const text = replaceObsidianLinks(str);
+				return renderMath(text);
 			},
 		};
 

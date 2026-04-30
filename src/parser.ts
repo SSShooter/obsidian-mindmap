@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import type { Root, List, Parent } from "mdast";
+import { renderMath } from "./utils";
 
 const htmlProcessor = unified().use(remarkRehype).use(rehypeStringify);
 
@@ -165,7 +166,7 @@ function processList(list: List): NodeObj[] {
 				const htmlStr = htmlProcessor.stringify(hastNode);
 				if (typeof htmlStr === "string") {
 					result.dangerouslySetInnerHTML =
-						replaceObsidianLinks(htmlStr);
+						renderMath(replaceObsidianLinks(htmlStr));
 				}
 			} catch (e) {
 				console.error("HTML conversion error", e);
@@ -216,7 +217,7 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 					const htmlStr = htmlProcessor.stringify(hastNode);
 					if (typeof htmlStr === "string") {
 						node.dangerouslySetInnerHTML =
-							replaceObsidianLinks(htmlStr);
+							renderMath(replaceObsidianLinks(htmlStr));
 					}
 				} catch (e) {
 					console.error("HTML conversion error", e);

@@ -44,6 +44,9 @@ const context = await esbuild.context({
 	minify: prod,
 	loader: {
 		".css": "css",
+		".woff": "dataurl",
+		".woff2": "dataurl",
+		".ttf": "dataurl",
 	},
 	plugins: [
 		{

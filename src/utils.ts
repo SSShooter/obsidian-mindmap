@@ -1,4 +1,5 @@
 import { App, moment } from "obsidian";
+import katex from "katex";
 import * as mindElixirI18n from "mind-elixir/i18n";
 
 export function getMindElixirLocale(): mindElixirI18n.LangPack {
@@ -35,4 +36,18 @@ export function handleMindmapClick(
 		e.stopPropagation();
 		return;
 	}
+}
+
+export function renderMath(text: string): string {
+	let parsedText = text;
+	// Handle display math ($$...$$)
+	parsedText = parsedText.replace(/\$\$([^$]+)\$\$/g, (_, math: string) => {
+		return katex.renderToString(math.trim(), { displayMode: true, output: 'html', throwOnError: false });
+	});
+
+	// Handle inline math ($...$)
+	parsedText = parsedText.replace(/\$([^$]+)\$/g, (_, math: string) => {
+		return katex.renderToString(math.trim(), { displayMode: false, output: 'html', throwOnError: false });
+	});
+	return parsedText;
 }
