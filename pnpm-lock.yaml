@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@mind-elixir/export-mindmap':
-        specifier: ^0.1.2
-        version: 0.1.2
+        specifier: 0.1.4-beta.6
+        version: 0.1.4-beta.6
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
@@ -309,8 +309,8 @@ packages:
     peerDependencies:
       eslint: ^9
 
-  '@mind-elixir/export-mindmap@0.1.2':
-    resolution: {integrity: sha512-//LxS5xIo8YnANv5GmRsr3jHFRZ9F0dCIpRL8yZXpA7tw8gf3DpfDQ3ctpWxn/J455vrGto5j9f++P+Kh59XeA==}
+  '@mind-elixir/export-mindmap@0.1.4-beta.6':
+    resolution: {integrity: sha512-263poG6XetguIfCHq8HDlqy/Tm8h7qCSXN02JrqauqWCTjWN8pHt8OdvH/TbW9MtI2kh1Uah7uXahlzZUmj1cA==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1959,7 +1959,7 @@ snapshots:
       eslint-plugin-react: 7.37.3(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-security: 1.4.0
 
-  '@mind-elixir/export-mindmap@0.1.2':
+  '@mind-elixir/export-mindmap@0.1.4-beta.6':
     dependencies:
       '@types/node': 24.12.2
       fast-xml-parser: 4.5.6
