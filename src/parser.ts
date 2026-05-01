@@ -165,8 +165,9 @@ function processList(list: List): NodeObj[] {
 				);
 				const htmlStr = htmlProcessor.stringify(hastNode);
 				if (typeof htmlStr === "string") {
-					result.dangerouslySetInnerHTML =
-						renderMath(replaceObsidianLinks(htmlStr));
+					result.dangerouslySetInnerHTML = renderMath(
+						replaceObsidianLinks(htmlStr),
+					);
 				}
 			} catch (e) {
 				console.error("HTML conversion error", e);
@@ -216,8 +217,9 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 					);
 					const htmlStr = htmlProcessor.stringify(hastNode);
 					if (typeof htmlStr === "string") {
-						node.dangerouslySetInnerHTML =
-							renderMath(replaceObsidianLinks(htmlStr));
+						node.dangerouslySetInnerHTML = renderMath(
+							replaceObsidianLinks(htmlStr),
+						);
 					}
 				} catch (e) {
 					console.error("HTML conversion error", e);
