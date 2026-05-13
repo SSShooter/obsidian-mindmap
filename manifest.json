@@ -1,7 +1,7 @@
 {
 	"id": "mindelixir-mindmap",
 	"name": "Mind Elixir Mind Map",
-	"version": "2.0.0",
+	"version": "3.2.1",
 	"minAppVersion": "1.7.2",
 	"description": "A mind map plugin powered by Mind Elixir.",
 	"author": "Dexter Chow",
