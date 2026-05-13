@@ -73,7 +73,7 @@ export default class MindMapPlugin extends Plugin {
 
 				// Initialize Mind Elixir instance
 				try {
-					activeWindow.setTimeout(() => {
+					window.setTimeout(() => {
 						const isDark =
 							activeDocument.body.classList.contains(
 								"theme-dark",

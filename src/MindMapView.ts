@@ -132,7 +132,7 @@ export class MindMapView extends ItemView {
 		// Register arrow movement events to write back to plaintext file with throttling
 		this.mind.bus.addListener("updateArrowDelta", () => {
 			if (this.arrowTimer) return;
-			this.arrowTimer = activeWindow.setTimeout(() => {
+			this.arrowTimer = window.setTimeout(() => {
 				void this.savePlaintextFromMindmap();
 				this.arrowTimer = null;
 			}, 2000);
@@ -161,12 +161,12 @@ export class MindMapView extends ItemView {
 	async onClose() {
 		// Clear any pending debounce timer
 		if (this.debounceTimer) {
-			activeWindow.clearTimeout(this.debounceTimer);
+			window.clearTimeout(this.debounceTimer);
 			this.debounceTimer = null;
 		}
 		// Clear any pending arrow timer
 		if (this.arrowTimer) {
-			activeWindow.clearTimeout(this.arrowTimer);
+			window.clearTimeout(this.arrowTimer);
 			this.arrowTimer = null;
 		}
 		// Cleanup
@@ -176,11 +176,11 @@ export class MindMapView extends ItemView {
 	private debouncedUpdate() {
 		// Clear existing timer
 		if (this.debounceTimer) {
-			activeWindow.clearTimeout(this.debounceTimer);
+			window.clearTimeout(this.debounceTimer);
 		}
 
 		// Set new timer to update after 300ms of inactivity
-		this.debounceTimer = activeWindow.setTimeout(() => {
+		this.debounceTimer = window.setTimeout(() => {
 			void this.render(true);
 			this.debounceTimer = null;
 		}, 1000);
@@ -236,7 +236,7 @@ export class MindMapView extends ItemView {
 		} finally {
 			// Use a short delay before clearing the flag to ensure the
 			// vault modify event has been processed
-			activeWindow.setTimeout(() => {
+			window.setTimeout(() => {
 				this.isSavingFromMindmap = false;
 			}, 300);
 		}
