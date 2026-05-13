@@ -73,9 +73,11 @@ export default class MindMapPlugin extends Plugin {
 
 				// Initialize Mind Elixir instance
 				try {
-					setTimeout(() => {
+					activeWindow.setTimeout(() => {
 						const isDark =
-							document.body.classList.contains("theme-dark");
+							activeDocument.body.classList.contains(
+								"theme-dark",
+							);
 						const options: Options = {
 							el: container,
 							direction: MindElixir.RIGHT,
@@ -123,10 +125,11 @@ export default class MindMapPlugin extends Plugin {
 		// Listen to theme changes
 		this.registerEvent(
 			this.app.workspace.on("css-change", () => {
-				const isDark = document.body.classList.contains("theme-dark");
+				const isDark =
+					activeDocument.body.classList.contains("theme-dark");
 				const theme = isDark ? MindElixir.DARK_THEME : MindElixir.THEME;
 
-				document
+				activeDocument
 					.querySelectorAll(".mindelixir-codeblock-container")
 					.forEach((el) => {
 						const mind = (el as MindElixirContainer)

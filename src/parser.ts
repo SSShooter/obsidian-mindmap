@@ -11,7 +11,7 @@ import { renderMath } from "./utils";
 const htmlProcessor = unified().use(remarkRehype).use(rehypeStringify);
 
 export function replaceObsidianLinks(htmlStr: string): string {
-	return htmlStr.replace(/\[\[(.*?)\]\]/g, (match: string, p1: string) => {
+	return htmlStr.replace(/\[\[(.*?)\]\]/g, (_match: string, p1: string) => {
 		const display = p1?.includes("|") ? p1.split("|")[1] : p1;
 		const href = p1?.split("|")[0];
 		return `<a class="internal-link" data-href="${href}">${display}</a>`;

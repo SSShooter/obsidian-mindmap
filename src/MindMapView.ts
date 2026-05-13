@@ -92,7 +92,7 @@ export class MindMapView extends ItemView {
 			handleMindmapClick(this.app, e, this.file?.path || "");
 		});
 
-		const isDark = document.body.classList.contains("theme-dark");
+		const isDark = activeDocument.body.classList.contains("theme-dark");
 		// Initialize MindElixir
 		// editable will be set to true later in render() if file is plaintext format
 		const options: Options = {
@@ -132,7 +132,7 @@ export class MindMapView extends ItemView {
 		// Register arrow movement events to write back to plaintext file with throttling
 		this.mind.bus.addListener("updateArrowDelta", () => {
 			if (this.arrowTimer) return;
-			this.arrowTimer = window.setTimeout(() => {
+			this.arrowTimer = activeWindow.setTimeout(() => {
 				void this.savePlaintextFromMindmap();
 				this.arrowTimer = null;
 			}, 2000);
@@ -142,7 +142,7 @@ export class MindMapView extends ItemView {
 		this.registerEvent(
 			this.app.workspace.on("css-change", () => {
 				const currentIsDark =
-					document.body.classList.contains("theme-dark");
+					activeDocument.body.classList.contains("theme-dark");
 				const theme = currentIsDark
 					? MindElixir.DARK_THEME
 					: MindElixir.THEME;
@@ -161,12 +161,12 @@ export class MindMapView extends ItemView {
 	async onClose() {
 		// Clear any pending debounce timer
 		if (this.debounceTimer) {
-			window.clearTimeout(this.debounceTimer);
+			activeWindow.clearTimeout(this.debounceTimer);
 			this.debounceTimer = null;
 		}
 		// Clear any pending arrow timer
 		if (this.arrowTimer) {
-			window.clearTimeout(this.arrowTimer);
+			activeWindow.clearTimeout(this.arrowTimer);
 			this.arrowTimer = null;
 		}
 		// Cleanup
@@ -176,11 +176,11 @@ export class MindMapView extends ItemView {
 	private debouncedUpdate() {
 		// Clear existing timer
 		if (this.debounceTimer) {
-			window.clearTimeout(this.debounceTimer);
+			activeWindow.clearTimeout(this.debounceTimer);
 		}
 
 		// Set new timer to update after 300ms of inactivity
-		this.debounceTimer = window.setTimeout(() => {
+		this.debounceTimer = activeWindow.setTimeout(() => {
 			void this.render(true);
 			this.debounceTimer = null;
 		}, 1000);
@@ -236,7 +236,7 @@ export class MindMapView extends ItemView {
 		} finally {
 			// Use a short delay before clearing the flag to ensure the
 			// vault modify event has been processed
-			window.setTimeout(() => {
+			activeWindow.setTimeout(() => {
 				this.isSavingFromMindmap = false;
 			}, 300);
 		}
