@@ -3,7 +3,7 @@ import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
 import { parseMarkdown, parsePlaintext } from "./parser";
 import { MindMapSettings } from "./settings";
-import { getMindElixirLocale, handleMindmapClick, processMarkdownContent } from "./utils";
+import { getMindElixirLocale, handleMindmapClick, processMarkdownContent, stripFrontmatter } from "./utils";
 import { downloadImage } from "@mind-elixir/export-mindmap";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
@@ -192,16 +192,17 @@ export class MindMapView extends ItemView {
 		if (!this.mind || !this.file) return;
 
 		const data = await this.app.vault.read(this.file);
+		const cleanData = stripFrontmatter(data);
 		let mindData;
 		// Heuristic: If content has Markdown headers, use Markdown parser.
 		// Otherwise (or if it looks like Mind Elixir Plaintext), use Plaintext parser which supports advanced features.
-		if (data.trim().startsWith("- ")) {
+		if (cleanData.trim().startsWith("- ")) {
 			this.isPlaintext = true;
-			mindData = parsePlaintext(data, this.file.basename);
+			mindData = parsePlaintext(cleanData, this.file.basename);
 		} else {
 			this.isPlaintext = false;
 			mindData = parseMarkdown(
-				data,
+				cleanData,
 				this.file.basename,
 				this.settings.h1AsRoot,
 				this.file.path,

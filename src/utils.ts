@@ -199,3 +199,9 @@ export function processMarkdownContent(
 
 	return processed;
 }
+
+export function stripFrontmatter(content: string): string {
+	const cleanContent = content.startsWith("\uFEFF") ? content.slice(1) : content;
+	if (!cleanContent.startsWith("---")) return content;
+	return cleanContent.replace(/^---[\s\S]*?\r?\n---\r?\n?/, "");
+}

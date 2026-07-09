@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import type { Root, List, Parent } from "mdast";
-import { processMarkdownContent, replaceObsidianLinks } from "./utils";
+import { processMarkdownContent, replaceObsidianLinks, stripFrontmatter } from "./utils";
 
 export { replaceObsidianLinks };
 
@@ -33,8 +33,10 @@ export function parseMarkdown(
 	sourcePath?: string,
 ): MindElixirData {
 	try {
+		// Strip frontmatter first
+		const cleanContent = stripFrontmatter(content);
 		// Parse markdown to AST
-		const ast = unified().use(remarkParse).use(remarkGfm).parse(content);
+		const ast = unified().use(remarkParse).use(remarkGfm).parse(cleanContent);
 		// Build tree structure from AST
 		const tree = markdownAstToTree(ast);
 
