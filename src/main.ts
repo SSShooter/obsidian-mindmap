@@ -10,7 +10,7 @@ import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { parsePlaintext } from "./parser";
 import "mind-elixir/style.css";
 import "./styles.css";
-import { handleMindmapClick, renderMath } from "./utils";
+import { handleMindmapClick, processMarkdownContent } from "./utils";
 import "katex/dist/katex.min.css";
 
 interface MindElixirContainer extends HTMLDivElement {
@@ -89,7 +89,10 @@ export default class MindMapPlugin extends Plugin {
 								? MindElixir.DARK_THEME
 								: MindElixir.THEME,
 							markdown: (str) => {
-								return renderMath(str);
+								return processMarkdownContent(
+									str,
+									ctx.sourcePath,
+								);
 							},
 						};
 						const mind = new MindElixir(options);

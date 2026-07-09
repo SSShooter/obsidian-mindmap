@@ -1,9 +1,9 @@
 import { ItemView, WorkspaceLeaf, TFile, Scope } from "obsidian";
 import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
 import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
-import { parseMarkdown, parsePlaintext, replaceObsidianLinks } from "./parser";
+import { parseMarkdown, parsePlaintext } from "./parser";
 import { MindMapSettings } from "./settings";
-import { getMindElixirLocale, handleMindmapClick, renderMath } from "./utils";
+import { getMindElixirLocale, handleMindmapClick, processMarkdownContent } from "./utils";
 import { downloadImage } from "@mind-elixir/export-mindmap";
 
 export const VIEW_TYPE_MINDMAP = "mindmap-view";
@@ -105,8 +105,10 @@ export class MindMapView extends ItemView {
 			selectionContainer: "body",
 			theme: isDark ? MindElixir.DARK_THEME : MindElixir.THEME,
 			markdown: (str) => {
-				const text = replaceObsidianLinks(str);
-				return renderMath(text);
+				return processMarkdownContent(
+					str,
+					this.file?.path || "",
+				);
 			},
 		};
 
@@ -202,6 +204,7 @@ export class MindMapView extends ItemView {
 				data,
 				this.file.basename,
 				this.settings.h1AsRoot,
+				this.file.path,
 			);
 		}
 

@@ -6,17 +6,11 @@ import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import type { Root, List, Parent } from "mdast";
-import { renderMath } from "./utils";
+import { processMarkdownContent, replaceObsidianLinks } from "./utils";
+
+export { replaceObsidianLinks };
 
 const htmlProcessor = unified().use(remarkRehype).use(rehypeStringify);
-
-export function replaceObsidianLinks(htmlStr: string): string {
-	return htmlStr.replace(/\[\[(.*?)\]\]/g, (_match: string, p1: string) => {
-		const display = p1?.includes("|") ? p1.split("|")[1] : p1;
-		const href = p1?.split("|")[0];
-		return `<a class="internal-link" data-href="${href}">${display}</a>`;
-	});
-}
 
 interface TreeItem {
 	children: TreeItem[];
@@ -36,6 +30,7 @@ export function parseMarkdown(
 	content: string,
 	filename: string,
 	h1AsRoot: boolean = false,
+	sourcePath?: string,
 ): MindElixirData {
 	try {
 		// Parse markdown to AST
@@ -54,12 +49,12 @@ export function parseMarkdown(
 				const h1 = tree.children[h1Index]!;
 				// rootTopic = extractText(h1.object);
 				rootTopic = (h1.object as unknown as NodeWithContent).value!;
-				nodes = treeToMindElixir(h1.children);
+				nodes = treeToMindElixir(h1.children, sourcePath);
 			} else {
-				nodes = treeToMindElixir(tree.children);
+				nodes = treeToMindElixir(tree.children, sourcePath);
 			}
 		} else {
-			nodes = treeToMindElixir(tree.children);
+			nodes = treeToMindElixir(tree.children, sourcePath);
 		}
 
 		// Return with filename (or H1) as root
@@ -145,7 +140,7 @@ function markdownAstToTree(ast: Root): TreeItem {
 /**
  * Process a list into MindElixir node structure
  */
-function processList(list: List): NodeObj[] {
+function processList(list: List, sourcePath?: string): NodeObj[] {
 	return list.children.map((listItem) => {
 		const result: NodeObj = {
 			topic: "",
@@ -165,8 +160,9 @@ function processList(list: List): NodeObj[] {
 				);
 				const htmlStr = htmlProcessor.stringify(hastNode);
 				if (typeof htmlStr === "string") {
-					result.dangerouslySetInnerHTML = renderMath(
-						replaceObsidianLinks(htmlStr),
+					result.dangerouslySetInnerHTML = processMarkdownContent(
+						htmlStr,
+						sourcePath,
 					);
 				}
 			} catch (e) {
@@ -175,7 +171,7 @@ function processList(list: List): NodeObj[] {
 		}
 
 		if (nestedList && nestedList.type === "list") {
-			result.children = processList(nestedList);
+			result.children = processList(nestedList, sourcePath);
 		}
 
 		return result;
@@ -192,17 +188,20 @@ interface NodeWithContent {
  * Convert tree structure to MindElixir format
  * This implements the key feature: merging lists into preceding content
  */
-function treeToMindElixir(items: TreeItem[]): NodeObj[] {
+function treeToMindElixir(
+	items: TreeItem[],
+	sourcePath?: string,
+): NodeObj[] {
 	const nodes: NodeObj[] = [];
 	if (items.length === 1 && items[0]!.type === "list") {
-		return processList(items[0]!.object as List);
+		return processList(items[0]!.object as List, sourcePath);
 	}
 	for (let i = 0; i < items.length; i++) {
 		const item = items[i]!;
 		const node = {} as NodeObj;
 		nodes.push(node);
 		if (item.type === "list") {
-			node.children = processList(item.object as List);
+			node.children = processList(item.object as List, sourcePath);
 			node.topic = "List";
 			continue;
 		} else {
@@ -217,8 +216,9 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 					);
 					const htmlStr = htmlProcessor.stringify(hastNode);
 					if (typeof htmlStr === "string") {
-						node.dangerouslySetInnerHTML = renderMath(
-							replaceObsidianLinks(htmlStr),
+						node.dangerouslySetInnerHTML = processMarkdownContent(
+							htmlStr,
+							sourcePath,
 						);
 					}
 				} catch (e) {
@@ -235,12 +235,12 @@ function treeToMindElixir(items: TreeItem[]): NodeObj[] {
 		const next = items[i + 1];
 		// If the next sibling is a list, merge it as children of current item
 		if (next && next.type === "list") {
-			node.children = processList(next.object as List);
+			node.children = processList(next.object as List, sourcePath);
 			// Remove the list from siblings (it's now a child)
 			items.splice(i + 1, 1);
 		} else {
 			// Recursively process children
-			node.children = treeToMindElixir(item.children);
+			node.children = treeToMindElixir(item.children, sourcePath);
 		}
 	}
 	return nodes;
