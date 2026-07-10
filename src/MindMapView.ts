@@ -119,7 +119,7 @@ export class MindMapView extends ItemView {
 			if (this.redrawFrame) {
 				cancelAnimationFrame(this.redrawFrame);
 			}
-			this.redrawFrame = requestAnimationFrame(() => {
+			this.redrawFrame = window.requestAnimationFrame(() => {
 				if (this.mind) {
 					this.mind.linkDiv();
 				}

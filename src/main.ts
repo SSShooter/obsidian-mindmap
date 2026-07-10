@@ -107,7 +107,7 @@ export default class MindMapPlugin extends Plugin {
 							if (redrawFrame) {
 								cancelAnimationFrame(redrawFrame);
 							}
-							redrawFrame = requestAnimationFrame(() => {
+							redrawFrame = window.requestAnimationFrame(() => {
 								if (mind) {
 									mind.linkDiv();
 								}
