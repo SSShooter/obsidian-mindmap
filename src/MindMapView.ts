@@ -22,6 +22,7 @@ export class MindMapView extends ItemView {
 	/** Flag to prevent re-render loop when we write back to the file */
 	private isSavingFromMindmap: boolean = false;
 	private arrowTimer: number | null = null;
+	private redrawFrame: number | null = null;
 
 	constructor(leaf: WorkspaceLeaf, settings: MindMapSettings) {
 		super(leaf);
@@ -114,6 +115,32 @@ export class MindMapView extends ItemView {
 
 		this.mind = new MindElixir(options);
 
+		const triggerRedraw = () => {
+			if (this.redrawFrame) {
+				cancelAnimationFrame(this.redrawFrame);
+			}
+			this.redrawFrame = requestAnimationFrame(() => {
+				if (this.mind) {
+					this.mind.linkDiv();
+				}
+				this.redrawFrame = null;
+			});
+		};
+
+		this.registerDomEvent(mapDiv, "load", (e) => {
+			const target = e.target as HTMLElement;
+			if (target && target.tagName === "IMG") {
+				triggerRedraw();
+			}
+		}, true);
+
+		this.registerDomEvent(mapDiv, "error", (e) => {
+			const target = e.target as HTMLElement;
+			if (target && target.tagName === "IMG") {
+				triggerRedraw();
+			}
+		}, true);
+
 		// Register file modification listener with debounce
 		this.registerEvent(
 			this.app.vault.on("modify", (file) => {
@@ -170,6 +197,11 @@ export class MindMapView extends ItemView {
 		if (this.arrowTimer) {
 			window.clearTimeout(this.arrowTimer);
 			this.arrowTimer = null;
+		}
+		// Clear any pending redraw frame
+		if (this.redrawFrame) {
+			cancelAnimationFrame(this.redrawFrame);
+			this.redrawFrame = null;
 		}
 		// Cleanup
 		this.mind?.destroy();

@@ -101,6 +101,34 @@ export default class MindMapPlugin extends Plugin {
 						(container as MindElixirContainer).mindElixirInstance =
 							mind;
 
+						// Add event listeners for image load/error to redraw links
+						let redrawFrame: number | null = null;
+						const triggerRedraw = () => {
+							if (redrawFrame) {
+								cancelAnimationFrame(redrawFrame);
+							}
+							redrawFrame = requestAnimationFrame(() => {
+								if (mind) {
+									mind.linkDiv();
+								}
+								redrawFrame = null;
+							});
+						};
+
+						container.addEventListener("load", (e) => {
+							const target = e.target as HTMLElement;
+							if (target && target.tagName === "IMG") {
+								triggerRedraw();
+							}
+						}, true);
+
+						container.addEventListener("error", (e) => {
+							const target = e.target as HTMLElement;
+							if (target && target.tagName === "IMG") {
+								triggerRedraw();
+							}
+						}, true);
+
 						// Add export button to the container
 						const exportBtn = container.createDiv({
 							cls: "mindelixir-export-btn",

@@ -39,6 +39,14 @@
     - 插件通过监听 MindElixir 的 `operation` 事件，在用户修改导图后自动调用 `mindElixirToPlaintext` 并将结果写回文件。
 - **双向绑定**：它是目前唯一支持从导图 UI 修改并保存到本地文件的模式。
 
+### 2.4 HTML 渲染与 Obsidian 本地资源（包含图片自适应重绘）
+为了在思维导图中展示丰富的节点内容，插件会对节点的主题内容进行 HTML 渲染和资源转化：
+- **资源路径解析**：在 `utils.ts` 的 `processMarkdownContent` 中，将 Obsidian 内部链接 `[[Link]]` 转化为 HTML 锚点，将本地图片引用 `![[Image.png]]` 转化为标准的 `<img>` 元素，并使用 `app.vault.getResourcePath` 将其转换为可供渲染的 `app://` 协议路径。
+- **自适应图片尺寸**：支持 Obsidian 格式的图片尺寸控制（例如 `![[Image.png|100]]` 或 `![[Image.png|100x150]]`），提取对应的宽度与高度属性，以减少页面排版跳动。
+- **连线错位自动重绘**：
+  - **问题分析**：由于图片资源的加载是异步的，在思维导图刚刚初始化（`init` / `refresh`）时，图片高度通常还没有被计算进去。当图片加载完毕后，节点高度会被撑开，而导图的 SVG 连线仍停留在原处，导致视觉上的连线错位。
+  - **解决方案**：在思维导图容器上注册捕获阶段（Capture Phase）的 `load` 与 `error` 事件监听器，监听到 `<img>` 加载行为后，使用 `requestAnimationFrame` 节流调用 `this.mind.linkDiv()`，在下一帧重新对齐并绘制连线，确保排版完美。
+
 ---
 
 ## 3. 总结
