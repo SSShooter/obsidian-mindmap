@@ -1,5 +1,5 @@
 import { ItemView, WorkspaceLeaf, TFile, Scope } from "obsidian";
-import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
+import MindElixir, { Options } from "mind-elixir";
 import { mindElixirToPlaintext } from "mind-elixir/plaintextConverter";
 import { parseMarkdown, parsePlaintext } from "./parser";
 import { MindMapSettings } from "./settings";
@@ -13,7 +13,7 @@ interface MindMapViewState {
 }
 
 export class MindMapView extends ItemView {
-	mind: MindElixirInstance | null = null;
+	mind: MindElixir | null = null;
 	file: TFile | null = null;
 	settings: MindMapSettings;
 	private debounceTimer: number | null = null;
@@ -249,7 +249,11 @@ export class MindMapView extends ItemView {
 		if (isRefresh) {
 			this.mind.refresh(mindData);
 		} else {
-			this.mind.init(mindData);
+			void this.mind.init(mindData).then((err) => {
+				if (err) {
+					console.error("MindMapView: failed to init mind map", err);
+				}
+			});
 		}
 	}
 

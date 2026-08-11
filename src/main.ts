@@ -6,7 +6,7 @@ import {
 	DEFAULT_SETTINGS,
 	MindMapSettingTab,
 } from "./settings";
-import MindElixir, { MindElixirInstance, Options } from "mind-elixir";
+import MindElixir, { Options } from "mind-elixir";
 import { parsePlaintext } from "./parser";
 import "mind-elixir/style.css";
 import "./styles.css";
@@ -14,7 +14,7 @@ import { handleMindmapClick, processMarkdownContent } from "./utils";
 import "katex/dist/katex.min.css";
 
 interface MindElixirContainer extends HTMLDivElement {
-	mindElixirInstance?: MindElixirInstance;
+	mindElixirInstance?: MindElixir;
 }
 
 export default class MindMapPlugin extends Plugin {
@@ -97,7 +97,14 @@ export default class MindMapPlugin extends Plugin {
 						};
 						const mind = new MindElixir(options);
 
-						mind.init(mindData);
+						void mind.init(mindData).then((err) => {
+							if (err) {
+								console.error(
+									"Error rendering mindelixir code block:",
+									err,
+								);
+							}
+						});
 						(container as MindElixirContainer).mindElixirInstance =
 							mind;
 
