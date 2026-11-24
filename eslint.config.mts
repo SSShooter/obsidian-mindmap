@@ -19,6 +19,9 @@ export default tseslint.config(
 			"main.js",
 			"package.json",
 			"tsconfig.json",
+			// dev-only verification harness, not shipped with the plugin; the
+			// obsidianmd rules need TS type services it has no use for
+			"scripts",
 		],
 	},
 	{
