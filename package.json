@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-mindmap",
-	"version": "4.0.0",
+	"version": "4.0.1",
 	"description": "An intuitive mind map plugin for Obsidian.",
 	"main": "main.js",
 	"type": "module",
